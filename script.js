@@ -10,38 +10,13 @@ const limits = [
   { min: 0, max: 2 }   // Raven Queen
 ];
 
-// Update score display
 function updateDisplay() {
   scores.forEach((score, index) => {
-    document.getElementById(`score-${index}`).textContent = score;
+    const el = document.getElementById(`score-${index}`);
+    if (el) el.textContent = score;
   });
 }
 
-// Change score logic (add or subtract 100 points)
-function changeScore(countIndex, change) {
-  scores[countIndex] += change * 1; // Adds or subtracts 100 points
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(scores));
-  updateDisplay();
-}
-
-// Initialize the score display
-document.addEventListener("DOMContentLoaded", () => {
-  updateDisplay();
-
-  document.querySelectorAll('.btn-increase').forEach(button => {
-    button.addEventListener('click', () => {
-      const countIndex = parseInt(button.getAttribute('data-count'), 10);
-      changeScore(countIndex, 1); // Add 100 points
-    });
-  });
-
-  document.querySelectorAll('.btn-decrease').forEach(button => {
-    button.addEventListener('click', () => {
-      const countIndex = parseInt(button.getAttribute('data-count'), 10);
-      changeScore(countIndex, -1); // Subtract 100 points
-    });
-  });
-  
 function changeScore(index, change) {
   const { min, max } = limits[index];
 
@@ -53,4 +28,21 @@ function changeScore(index, change) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(scores));
   updateDisplay();
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+  updateDisplay();
+
+  document.querySelectorAll('.btn-increase').forEach(button => {
+    button.addEventListener('click', () => {
+      const index = parseInt(button.dataset.count, 10);
+      changeScore(index, 1);
+    });
+  });
+
+  document.querySelectorAll('.btn-decrease').forEach(button => {
+    button.addEventListener('click', () => {
+      const index = parseInt(button.dataset.count, 10);
+      changeScore(index, -1);
+    });
+  });
 });
