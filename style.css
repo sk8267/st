@@ -1,0 +1,22 @@
+body {
+  font-family: 'Arial', sans-serif;
+  margin: 10px;
+  padding: 0;
+  background-color: transparent; /* Remove any background */
+}
+
+.hp { grid-area: first; }
+.hitdice { grid-area: second; }
+.firstlvl { grid-area: third; }
+.secondlvl { grid-area: fourth; }
+.bladesong { grid-area: fifth; }
+.raven { grid-area: sixth; }
+.firstprep { grid-area: seventh; }
+.secondprep { grid-area: eighth; }
+
+.stats {
+  display: grid;
+  grid-template-areas:
+    'first third fifth seventh'
+    'second fourth sixth eighth';
+}
