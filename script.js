@@ -1,6 +1,15 @@
 const STORAGE_KEY = "countScores";
-let scores = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [21, 3, 4, 2, 2, 2];
 
+// Load scores safely
+let scores;
+try {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  scores = saved ? JSON.parse(saved) : [21, 3, 4, 2, 2, 2];
+} catch (e) {
+  scores = [21, 3, 4, 2, 2, 2];
+}
+
+// Min / max limits
 const limits = [
   { min: 0, max: 21 }, // HP
   { min: 0, max: 3 },  // Hit dice
@@ -10,39 +19,56 @@ const limits = [
   { min: 0, max: 2 }   // Raven Queen
 ];
 
+// Update UI
 function updateDisplay() {
   scores.forEach((score, index) => {
     const el = document.getElementById(`score-${index}`);
-    if (el) el.textContent = score;
+    if (el) {
+      el.textContent = score;
+    }
   });
 }
 
+// Change score safely
 function changeScore(index, change) {
-  const { min, max } = limits[index];
+  const limit = limits[index];
+  if (!limit) return;
 
   scores[index] = Math.min(
-    max,
-    Math.max(min, scores[index] + change)
+    limit.max,
+    Math.max(limit.min, scores[index] + change)
   );
 
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(scores));
+  // Update UI FIRST (never blocked)
   updateDisplay();
+
+  // Persist if possible
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(scores));
+  } catch (e) {
+    console.warn("localStorage unavailable");
+  }
 }
 
+// Init
 document.addEventListener("DOMContentLoaded", () => {
   updateDisplay();
 
-  document.querySelectorAll('.btn-increase').forEach(button => {
-    button.addEventListener('click', () => {
-      const index = parseInt(button.dataset.count, 10);
-      changeScore(index, 1);
+  document.querySelectorAll(".btn-increase").forEach(button => {
+    button.addEventListener("click", () => {
+      const index = Number(button.dataset.count);
+      if (!Number.isNaN(index)) {
+        changeScore(index, 1);
+      }
     });
   });
 
-  document.querySelectorAll('.btn-decrease').forEach(button => {
-    button.addEventListener('click', () => {
-      const index = parseInt(button.dataset.count, 10);
-      changeScore(index, -1);
+  document.querySelectorAll(".btn-decrease").forEach(button => {
+    button.addEventListener("click", () => {
+      const index = Number(button.dataset.count);
+      if (!Number.isNaN(index)) {
+        changeScore(index, -1);
+      }
     });
   });
 });
