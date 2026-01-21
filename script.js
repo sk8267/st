@@ -1,16 +1,9 @@
-alert("script loaded");
+// ================================
+// Config
+// ================================
 const STORAGE_KEY = "countScores";
+const DEFAULT_SCORES = [21, 3, 4, 2, 2, 2];
 
-// Load scores safely
-let scores;
-try {
-  const saved = localStorage.getItem(STORAGE_KEY);
-  scores = saved ? JSON.parse(saved) : [21, 3, 4, 2, 2, 2];
-} catch (e) {
-  scores = [21, 3, 4, 2, 2, 2];
-}
-
-// Min / max limits
 const limits = [
   { min: 0, max: 21 }, // HP
   { min: 0, max: 3 },  // Hit dice
@@ -20,7 +13,21 @@ const limits = [
   { min: 0, max: 2 }   // Raven Queen
 ];
 
-// Update UI
+// ================================
+// State (safe load)
+// ================================
+let scores;
+
+try {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  scores = saved ? JSON.parse(saved) : [...DEFAULT_SCORES];
+} catch (e) {
+  scores = [...DEFAULT_SCORES];
+}
+
+// ================================
+// UI Update
+// ================================
 function updateDisplay() {
   scores.forEach((score, index) => {
     const el = document.getElementById(`score-${index}`);
@@ -30,20 +37,20 @@ function updateDisplay() {
   });
 }
 
-// Change score safely
-function changeScore(index, change) {
+// ================================
+// Score Change
+// ================================
+function changeScore(index, delta) {
   const limit = limits[index];
   if (!limit) return;
 
   scores[index] = Math.min(
     limit.max,
-    Math.max(limit.min, scores[index] + change)
+    Math.max(limit.min, scores[index] + delta)
   );
 
-  // Update UI FIRST (never blocked)
   updateDisplay();
 
-  // Persist if possible
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(scores));
   } catch (e) {
@@ -51,25 +58,49 @@ function changeScore(index, change) {
   }
 }
 
+// ================================
+// Reset
+// ================================
+function resetScores() {
+  scores = [...DEFAULT_SCORES];
+  updateDisplay();
+
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(scores));
+  } catch (e) {
+    console.warn("localStorage unavailable");
+  }
+}
+
+// ================================
 // Init
+// ================================
 document.addEventListener("DOMContentLoaded", () => {
   updateDisplay();
 
-  document.querySelectorAll(".btn-increase").forEach(button => {
-    button.addEventListener("click", () => {
-      const index = Number(button.dataset.count);
+  // + buttons
+  document.querySelectorAll(".btn-increase").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const index = Number(btn.dataset.count);
       if (!Number.isNaN(index)) {
         changeScore(index, 1);
       }
     });
   });
 
-  document.querySelectorAll(".btn-decrease").forEach(button => {
-    button.addEventListener("click", () => {
-      const index = Number(button.dataset.count);
+  // - buttons
+  document.querySelectorAll(".btn-decrease").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const index = Number(btn.dataset.count);
       if (!Number.isNaN(index)) {
         changeScore(index, -1);
       }
     });
   });
+
+  // Reset button
+  const resetBtn = document.getElementById("reset-btn");
+  if (resetBtn) {
+    resetBtn.addEventListener("click", resetScores);
+  }
 });
