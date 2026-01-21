@@ -1,3 +1,4 @@
+alert("script loaded");
 const STORAGE_KEY = "countScores";
 
 // Load scores safely
