@@ -2,15 +2,16 @@
 // Config
 // ================================
 const STORAGE_KEY = "countScores";
-const DEFAULT_SCORES = [24, 4, 4, 3, 2, 2];
+const DEFAULT_SCORES = [30, 5, 4, 3, 2, 3, 3];
 
 const limits = [
-  { min: 0, max: 24 }, // HP
-  { min: 0, max: 4 },  // Hit dice
+  { min: 0, max: 30 }, // HP
+  { min: 0, max: 5 },  // Hit dice
   { min: 0, max: 4 },  // 1st level slots
   { min: 0, max: 3 },  // 2nd level slots
-  { min: 0, max: 2 },  // Bladesong
-  { min: 0, max: 2 }   // Raven Queen
+  { min: 0, max: 2 },  // 3rd level slots
+  { min: 0, max: 3 },  // Bladesong
+  { min: 0, max: 3 }   // Raven Queen
 ];
 
 // ================================
