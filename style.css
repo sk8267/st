@@ -9,14 +9,16 @@ body {
 .hitdice { grid-area: second; }
 .firstlvl { grid-area: third; }
 .secondlvl { grid-area: fourth; }
+.thirdlvl { grid-area: ninth; }
 .bladesong { grid-area: fifth; }
 .raven { grid-area: sixth; }
 .firstprep { grid-area: seventh; }
 .secondprep { grid-area: eighth; }
+.thirdprep { grid-area: tenth; }
 
 .stats {
   display: grid;
   grid-template-areas:
-    'first third fifth seventh'
-    'second fourth sixth eighth';
+    'first third fifth seventh ninth'
+    'second fourth sixth eighth tenth';
 }
